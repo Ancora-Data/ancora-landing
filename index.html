@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ancora</title>
-<meta name="description" content="Ancora tests backend services the way they actually run and delivers every bug as a runnable reproduction.">
+<meta name="description" content="Ancora finds the bugs that only show up in production and delivers every one as a runnable reproduction.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="icon" href="favicon-32.png" sizes="32x32" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -243,7 +243,7 @@
   </nav>
 
   <header class="hero">
-    <h1>Ancora tests backend services the way they actually run.</h1>
+    <h1>Ancora finds the bugs that only show up in production.</h1>
     <p class="lede">Point it at a repo. Ancora deploys the app in containers with seeded data, generates a test suite that drives it from the API down to the database, and delivers every bug as a runnable reproduction.</p>
     <div class="cta-row">
       <a class="btn" href="mailto:gene@ancoradata.com?subject=Ancora%20early%20access">Get early access</a>
@@ -300,7 +300,7 @@ test_save_during_slow_external_call          <span class="fail">FAILED</span>
   </section>
 
   <section class="prose">
-    <h2>Why this layer</h2>
+    <h2>Why these bugs get missed</h2>
     <p>The hardest bugs live between components: a race that loses user data, an integration that writes a blank file over saved work, a partial failure that leaves state half committed. Unit tests cannot reach them and browser tests cannot see them.</p>
     <p>Catching them takes a live environment running the assembled system. That environment has always been expensive to build, so most teams skip it and meet these bugs in production. Ancora generates it from the repo.</p>
   </section>
