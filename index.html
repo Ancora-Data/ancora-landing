@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ancora</title>
+<meta name="description" content="Ancora tests backend services the way they actually run and delivers every bug as a runnable reproduction.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #fbfbf9;
+    --ink: #1a1f1d;
+    --muted: #5c6663;
+    --rule: #e3e5e0;
+    --fail: #c03b2d;
+    --pass: #2f7a4d;
+    --card: #ffffff;
+    --body: "Schibsted Grotesk", system-ui, -apple-system, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--body);
+    background: var(--paper);
+    color: var(--ink);
+    line-height: 1.6;
+    font-size: 1.0625rem;
+  }
+  .wrap {
+    max-width: 43rem;
+    margin: 0 auto;
+    padding: 0 1.25rem;
+  }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 1.5rem 0 0;
+  }
+  .wordmark {
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 1rem;
+    letter-spacing: 0.01em;
+    text-decoration: none;
+  }
+  .nav-link {
+    font-size: 0.9375rem;
+    color: var(--muted);
+    text-decoration: none;
+    border-bottom: 1px solid var(--rule);
+    padding-bottom: 1px;
+  }
+  .nav-link:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+  header.hero { padding: 4.5rem 0 3rem; }
+  h1 {
+    font-size: clamp(1.9rem, 5.5vw, 2.75rem);
+    font-weight: 700;
+    line-height: 1.12;
+    letter-spacing: -0.02em;
+    max-width: 38rem;
+  }
+  .lede {
+    margin-top: 1.25rem;
+    font-size: 1.125rem;
+    color: var(--muted);
+    max-width: 36rem;
+  }
+  .cta-row {
+    margin-top: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .btn {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--paper);
+    font-family: var(--body);
+    font-weight: 500;
+    font-size: 1rem;
+    text-decoration: none;
+    padding: 0.7rem 1.3rem;
+    border-radius: 6px;
+  }
+  .btn:hover { background: #000; }
+  .cta-note {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+  }
+
+  .report {
+    background: var(--card);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(26, 31, 29, 0.04);
+  }
+  .report-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  .report-body {
+    padding: 1rem;
+    overflow-x: auto;
+  }
+  .report-body pre {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    color: var(--ink);
+  }
+  .dim { color: var(--muted); }
+  .pass { color: var(--pass); font-weight: 500; }
+  .fail { color: var(--fail); font-weight: 600; }
+  .report-caption {
+    margin-top: 0.875rem;
+    font-size: 0.9375rem;
+    color: var(--muted);
+    max-width: 36rem;
+  }
+
+  .proof {
+    margin: 3.5rem 0;
+    padding-left: 1.25rem;
+    border-left: 3px solid var(--fail);
+    font-size: 1.1875rem;
+    font-weight: 500;
+    max-width: 34rem;
+  }
+
+  section { padding: 0 0 3.5rem; }
+  h2 {
+    font-size: 0.8125rem;
+    font-family: var(--mono);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+  }
+  .steps { list-style: none; }
+  .steps li {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    gap: 0.75rem;
+    padding: 1.1rem 0;
+    border-top: 1px solid var(--rule);
+  }
+  .steps li:last-child { border-bottom: 1px solid var(--rule); }
+  .step-n {
+    font-family: var(--mono);
+    font-size: 0.8125rem;
+    color: var(--muted);
+    padding-top: 0.2rem;
+  }
+  .steps strong { font-weight: 700; }
+  .steps p { color: var(--muted); font-size: 0.9375rem; margin-top: 0.15rem; }
+
+  .prose p { max-width: 36rem; margin-bottom: 1rem; }
+  .prose p:last-child { margin-bottom: 0; }
+
+  .founders {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+  }
+  .founder img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border-radius: 6px;
+    border: 1px solid var(--rule);
+    filter: grayscale(1);
+    display: block;
+    margin-bottom: 0.875rem;
+  }
+  .founder strong { font-weight: 700; display: block; }
+  .founder p { color: var(--muted); font-size: 0.9375rem; margin-top: 0.25rem; }
+  @media (max-width: 600px) {
+    .founders { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+
+  .closing {
+    border-top: 1px solid var(--rule);
+    padding: 3rem 0 3.5rem;
+  }
+  .closing h3 {
+    font-size: 1.375rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  .closing p { color: var(--muted); margin-top: 0.5rem; max-width: 32rem; }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 1.5rem 0 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  footer a { text-decoration: none; border-bottom: 1px solid var(--rule); padding-bottom: 1px; }
+  footer a:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+  @media (max-width: 480px) {
+    header.hero { padding: 3rem 0 2.5rem; }
+    .proof { font-size: 1.0625rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <nav>
+    <a class="wordmark" href="./">ancora</a>
+    <a class="nav-link" href="mailto:gene@ancoradata.com?subject=Ancora%20early%20access">Get early access</a>
+  </nav>
+
+  <header class="hero">
+    <h1>Ancora tests backend services the way they actually run.</h1>
+    <p class="lede">Point it at a repo. Ancora deploys the app in containers with seeded data, generates a test suite that drives it from the API down to the database, and delivers every bug as a runnable reproduction.</p>
+    <div class="cta-row">
+      <a class="btn" href="mailto:gene@ancoradata.com?subject=Ancora%20early%20access">Get early access</a>
+      <span class="cta-note">launching publicly soon</span>
+    </div>
+  </header>
+
+  <div class="report" role="img" aria-label="An Ancora test report showing one passing test and one failing test with a runnable reproduction">
+    <div class="report-head">
+      <span>report · concurrency suite</span>
+      <span>2 tests · 1 failed</span>
+    </div>
+    <div class="report-body"><pre><span class="dim">$ pytest suites/concurrency/test_saves.py</span>
+
+test_save_roundtrip                          <span class="pass">PASSED</span>
+test_save_during_slow_external_call          <span class="fail">FAILED</span>
+
+<span class="fail">AssertionError</span>: note body lost after concurrent save
+  expected: the user's edit
+  got:      <span class="dim">""</span>
+
+<span class="dim">reproduction written to</span> repros/save_race.py
+<span class="dim">rerun anytime:</span> pytest repros/save_race.py</pre></div>
+  </div>
+  <p class="report-caption">A save lands while a slow external call is in flight and the change silently disappears. This bug exists only in the assembled system, so no unit test can reach it.</p>
+
+  <p class="proof">Run on six open source projects so far: 18 confirmed bugs, none previously reported, each with a runnable reproduction.</p>
+
+  <section>
+    <h2>How it works</h2>
+    <ol class="steps">
+      <li>
+        <span class="step-n">1</span>
+        <div>
+          <strong>Point it at a repo.</strong>
+          <p>Ancora figures out how to deploy the app, stands it up in containers, and seeds it with data.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-n">2</span>
+        <div>
+          <strong>It generates a test suite.</strong>
+          <p>The agent infers what the app is supposed to do, checks in with you on what to test, then drives the running system with real state, fault and delay injection, and concurrent load.</p>
+        </div>
+      </li>
+      <li>
+        <span class="step-n">3</span>
+        <div>
+          <strong>Every bug arrives as a runnable reproduction.</strong>
+          <p>Everything Ancora produces is pytest, so failures rerun on demand, with or without an AI in the loop, and hand straight off to manual or agentic debugging.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section class="prose">
+    <h2>Why this layer</h2>
+    <p>The hardest bugs live between components: a race that loses user data, an integration that writes a blank file over saved work, a partial failure that leaves state half committed. Unit tests cannot reach them and browser tests cannot see them.</p>
+    <p>Catching them takes a live environment running the assembled system. That environment has always been expensive to build, so most teams skip it and meet these bugs in production. Ancora generates it from the repo.</p>
+  </section>
+
+  <section>
+    <h2>Founders</h2>
+    <div class="founders">
+      <div class="founder">
+        <img src="img/gene.jpg" alt="Gene Hong" onerror="this.style.display='none'">
+        <strong>Gene Hong</strong>
+        <p>Builds data and agentic AI products, where evals and verifying that systems actually work are the everyday bottleneck.</p>
+      </div>
+      <div class="founder">
+        <img src="img/dan.jpg" alt="Dan Qian" onerror="this.style.display='none'">
+        <strong>Dan Qian</strong>
+        <p>PhD researcher in distributed systems, working on AI agents that build and verify them. Previously built data systems at AWS and Bloomberg.</p>
+      </div>
+      <div class="founder">
+        <img src="img/miles.jpg" alt="Miles Liu" onerror="this.style.display='none'">
+        <strong>Miles Liu</strong>
+        <p>Built ML and systems software for surgical robotics at Intuitive Surgical, where a software failure breaks physical hardware.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="closing">
+    <h3>Launching publicly soon.</h3>
+    <p>We are onboarding early users now. If you want Ancora on your codebase, get in touch.</p>
+    <div class="cta-row">
+      <a class="btn" href="mailto:gene@ancoradata.com?subject=Ancora%20early%20access">Get early access</a>
+    </div>
+  </div>
+
+  <footer>
+    <span>© 2026 Ancora</span>
+    <a href="mailto:gene@ancoradata.com">gene@ancoradata.com</a>
+  </footer>
+
+</div>
+
+</body>
+</html>
